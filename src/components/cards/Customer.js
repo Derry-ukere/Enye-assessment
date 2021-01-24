@@ -1,37 +1,42 @@
-import {
-  DropdownButton,
-  Dropdown,
-  Card,
-  ListGroup,
-  ListGroupItem,
-  Button,
-  Row,
-  Col,
-  Form,
-} from 'react-bootstrap'
-import React from 'react'
+import Card from 'react-bootstrap/Card'
+import { LinkContainer } from 'react-router-bootstrap'
+import { Table, Button } from 'react-bootstrap'
+import React, { useEffect } from 'react'
 
-const Customer = () => {
+const Customer = ({ data }) => {
+  useEffect(() => {}, [])
+
   return (
     <div>
-      <Card style={{ width: '18rem' }} className='my-2'>
-        <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </Card.Text>
-        </Card.Body>
-        <ListGroup className='list-group-flush'>
-          <ListGroupItem>Cras justo odio</ListGroupItem>
-          <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-          <ListGroupItem>Vestibulum at eros</ListGroupItem>
-        </ListGroup>
-        <Card.Body>
-          <Card.Link href='#'>Card Link</Card.Link>
-          <Card.Link href='#'>Another Link</Card.Link>
-        </Card.Body>
-      </Card>
+      <Table striped bordered hover responsive className='table-sm'>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((customer) => (
+            <tr>
+              <td>{customer.FirstName}</td>
+              <td>{customer.LastName}</td>
+              <td>{customer.Gender}</td>
+              <td>{customer.Email}</td>
+              <td>{customer.PhoneNumber}</td>
+              <td>
+                <LinkContainer to={`/${customer.FirstName}`}>
+                  <Button variant='outline-success' className='btn-sm'>
+                    More Details
+                  </Button>
+                </LinkContainer>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   )
 }

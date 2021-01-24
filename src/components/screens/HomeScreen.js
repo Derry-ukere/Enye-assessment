@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  DropdownButton,
   Container,
   CardDeck,
   Card,
@@ -10,74 +9,122 @@ import {
   Col,
   Form,
 } from 'react-bootstrap'
+
 import Customer from '../cards/Customer'
+import { data } from '../../Data'
+
 const HomeScreen = () => {
+  const [gender, setGender] = useState('All')
+  const [payment, setPayment] = useState('All')
+  const [peopleArray, setPeopleArray] = useState([])
+
+  const filter = () => {
+    const newData = data.filter((person) => {
+      if (gender === 'All' && payment === 'All') {
+        return person
+      } else if (gender !== 'All' && payment === 'All') {
+        return person.Gender === gender
+      } else if (gender === 'All' && payment !== 'All') {
+        return person.PaymentMethod === payment
+      } else if (gender !== 'All' && payment !== 'All') {
+        return person.PaymentMethod === payment && person.Gender === gender
+      }
+    })
+    setPeopleArray(newData)
+    console.log('new data', newData)
+    console.log('peopleArray', peopleArray[0])
+    console.log('gender!', gender)
+    console.log('payment!', payment)
+  }
+  const submitHandler = (e) => {
+    e.preventDefault()
+    filter()
+  }
+
+  const setData = () => {
+    setPeopleArray(data)
+    console.log('peopleArray', peopleArray[0])
+  }
+  useEffect(() => {
+    setData()
+    console.log('peopleArray!!', peopleArray[0])
+    console.log('peopleArray first index', peopleArray[0])
+    console.log('peopleArray second index', peopleArray[2])
+    console.log('peopleArray first index of firt', peopleArray[0])
+
+    // console.log('old data!!', data)
+  }, [gender, payment])
+
   return (
     <div className='top'>
       <Row>
         <Col md={9}>
-          <h1>List Of Top Customers</h1>
+          <h1>All Patients</h1>
           <Container>
             <CardDeck className=' bg-secondary'>
-              <Customer />
-              <Customer />
-              <Customer />
-              <Customer />
-              <Customer />
-              <Customer />
+              <Customer data={peopleArray} />
             </CardDeck>
           </Container>
         </Col>
         <Col md={3} className='fix'>
-          <h4>
-            <strong>Sort by:</strong>
-          </h4>
-
-          <Card>
-            <ListGroup variant='flush'>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Gender</Col>
-                  <Col>
-                    <Form.Control as='select' value={'test'} onChange={'test'}>
-                      <option key={'test'} value={'Mastercard'}>
-                        All
-                      </option>
-                      <option key={'test'} value={'Male'}>
-                        Male{' '}
-                      </option>
-                      <option key={'test'} value={'Female'}>
-                        Female{' '}
-                      </option>
-                    </Form.Control>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Card Type</Col>
-                  <Col>
-                    <Form.Control as='select' value={'test'} onChange={'test'}>
-                      <option key={'test'} value={'Mastercard'}>
-                        All
-                      </option>
-                      <option key={'test'} value={'Mastercard'}>
-                        Mastercard
-                      </option>
-                      <option key={'test'} value={'Visacard'}>
-                        Visacard
-                      </option>
-                    </Form.Control>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Button onClick={'test'} className='btn-block' type='button'>
-                  Sort
-                </Button>
-              </ListGroup.Item>
-            </ListGroup>
-          </Card>
+          <div>
+            <h4>
+              <strong>Sort by:</strong>
+            </h4>
+            <Card>
+              <Form onSubmit={submitHandler}>
+                <ListGroup variant='flush'>
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>
+                        <Form.Label>Gender</Form.Label>
+                      </Col>
+                      <Col>
+                        <Form.Group>
+                          <Form.Control
+                            as='select'
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                          >
+                            <option>All</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Prefer to skip</option>
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>
+                        <Form.Label>Payment</Form.Label>
+                      </Col>
+                      <Col>
+                        <Form.Group>
+                          <Form.Control
+                            as='select'
+                            value={payment}
+                            onChange={(e) => setPayment(e.target.value)}
+                          >
+                            <option>All</option>
+                            <option>check</option>
+                            <option>money order</option>
+                            <option>paypal</option>
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <Button className='btn-block' type='submit'>
+                      Filter
+                    </Button>
+                  </ListGroup.Item>
+                </ListGroup>
+              </Form>
+            </Card>
+          </div>
         </Col>
       </Row>
     </div>
