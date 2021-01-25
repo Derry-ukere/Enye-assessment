@@ -8,7 +8,7 @@ function Footer() {
       <cite>
         <Container>
           <span className='white'>
-            Copyright Tech Prime shop &copy; {date.getFullYear()}{' '}
+            Copyright Kents Hospital &copy; {date.getFullYear()}{' '}
           </span>
         </Container>
       </cite>

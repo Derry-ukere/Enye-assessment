@@ -1,4 +1,3 @@
-import Card from 'react-bootstrap/Card'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button } from 'react-bootstrap'
 import React, { useEffect } from 'react'
@@ -19,15 +18,15 @@ const Customer = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((customer) => (
-            <tr>
+          {data.map((customer, index) => (
+            <tr key={index}>
               <td>{customer.FirstName}</td>
               <td>{customer.LastName}</td>
               <td>{customer.Gender}</td>
               <td>{customer.Email}</td>
               <td>{customer.PhoneNumber}</td>
               <td>
-                <LinkContainer to={`/${customer.FirstName}`}>
+                <LinkContainer to={`/details/${customer.FirstName}`}>
                   <Button variant='outline-success' className='btn-sm'>
                     More Details
                   </Button>

@@ -9,17 +9,29 @@ import {
   Col,
   Form,
 } from 'react-bootstrap'
-
+import axios from 'axios'
 import Customer from '../cards/Customer'
-import { data } from '../../Data'
+import Pagination from '../cards/paginate'
+import { data, toTitleCase } from '../../Data'
+import Spinner from '../cards/Spinner'
+import Message from '../cards/Message'
 
-const HomeScreen = () => {
+const HomeScreen = ({ match }) => {
   const [gender, setGender] = useState('All')
   const [payment, setPayment] = useState('All')
   const [peopleArray, setPeopleArray] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [postsPerPage] = useState(3)
+  const [loading, setLoading] = useState(false)
+  var keyword = match.params.keyword
+
+  // Get current patients
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+  const currentPosts = peopleArray.slice(indexOfFirstPost, indexOfLastPost)
 
   const filter = () => {
-    const newData = data.filter((person) => {
+    const newData = peopleArray.filter((person) => {
       if (gender === 'All' && payment === 'All') {
         return person
       } else if (gender !== 'All' && payment === 'All') {
@@ -31,40 +43,64 @@ const HomeScreen = () => {
       }
     })
     setPeopleArray(newData)
-    console.log('new data', newData)
-    console.log('peopleArray', peopleArray[0])
-    console.log('gender!', gender)
-    console.log('payment!', payment)
   }
-  const submitHandler = (e) => {
+
+  //Function to filter Data via key world
+
+  const findPatients = (word, dataBase) => {
+    if (word === undefined || word === null) {
+      keyword = ''
+      console.log('keyword empty')
+    }
+    const filteredData = dataBase.filter((item) => {
+      const titleCaseKeyword = toTitleCase(word)
+      if (item.FirstName.includes(titleCaseKeyword)) {
+        return item
+      }
+    })
+    console.log('filtered', filteredData)
+    setPeopleArray(filteredData)
+  }
+
+  // function to handle  form submit functionalities
+  function submitHandler(e) {
     e.preventDefault()
     filter()
   }
 
   const setData = () => {
     setPeopleArray(data)
-    console.log('peopleArray', peopleArray[0])
   }
-  useEffect(() => {
-    setData()
-    console.log('peopleArray!!', peopleArray[0])
-    console.log('peopleArray first index', peopleArray[0])
-    console.log('peopleArray second index', peopleArray[2])
-    console.log('peopleArray first index of firt', peopleArray[0])
+  const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
-    // console.log('old data!!', data)
-  }, [gender, payment])
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const res = await axios.get('https://api.enye.tech/v1/challenge/records')
+      console.log(res)
+      setLoading(false)
+    }
+
+    fetchData()
+    setData()
+    // filterData()
+    findPatients(keyword, data)
+  }, [gender, payment, keyword])
 
   return (
     <div className='top'>
       <Row>
         <Col md={9}>
           <h1>All Patients</h1>
-          <Container>
-            <CardDeck className=' bg-secondary'>
-              <Customer data={peopleArray} />
-            </CardDeck>
-          </Container>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <Container>
+              <CardDeck className=' bg-secondary'>
+                <Customer data={currentPosts} />
+              </CardDeck>
+            </Container>
+          )}
         </Col>
         <Col md={3} className='fix'>
           <div>
@@ -127,6 +163,11 @@ const HomeScreen = () => {
           </div>
         </Col>
       </Row>
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={peopleArray.length}
+        paginate={paginate}
+      />
     </div>
   )
 }

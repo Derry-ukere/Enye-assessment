@@ -13,7 +13,8 @@ function App() {
         <Header />
         <Container>
           <Route path='/' component={HomeScreen} exact />
-          <Route path='/:name' component={AboutScreen} exact />
+          <Route path='/search/:keyword' component={HomeScreen} exact />
+          <Route path='/details/:name' component={AboutScreen} exact />
         </Container>
         <Footer />
       </div>
