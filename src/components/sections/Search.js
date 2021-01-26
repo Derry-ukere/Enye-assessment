@@ -8,11 +8,9 @@ const SearchBox = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    if (keyword.trim()) {
-      history.push(`/search/${keyword}`)
-    } else {
-      history.push('/')
-    }
+    const word = keyword.toLowerCase().trim()
+    history.push(`/search/${word}`)
+    setKeyword('')
   }
 
   const changeHandler = (e) => {

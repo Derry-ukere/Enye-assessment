@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import {
   Container,
   CardDeck,
@@ -9,28 +10,33 @@ import {
   Col,
   Form,
 } from 'react-bootstrap'
-import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
 import Customer from '../cards/Customer'
 import Pagination from '../cards/paginate'
-import { data, toTitleCase } from '../../Data'
+import { fakeData, toTitleCase } from '../../Data'
 import Spinner from '../cards/Spinner'
 import Message from '../cards/Message'
-
+import { listRecords } from '../../actions/patientsActions'
 const HomeScreen = ({ match }) => {
   const [gender, setGender] = useState('All')
   const [payment, setPayment] = useState('All')
   const [peopleArray, setPeopleArray] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [postsPerPage] = useState(3)
-  const [loading, setLoading] = useState(false)
+  const [postsPerPage] = useState(20)
+  const [isloading, setLoading] = useState(false)
   var keyword = match.params.keyword
 
+  // redux store
+  const dispatch = useDispatch()
+  const recordslist = useSelector((state) => state.recordslist)
+  const { loading, error, records } = recordslist
   // Get current patients
   const indexOfLastPost = currentPage * postsPerPage
   const indexOfFirstPost = indexOfLastPost - postsPerPage
-  const currentPosts = peopleArray.slice(indexOfFirstPost, indexOfLastPost)
+  const currentPosts = records.slice(indexOfFirstPost, indexOfLastPost)
 
   const filter = () => {
+    console.log(gender, payment)
     const newData = peopleArray.filter((person) => {
       if (gender === 'All' && payment === 'All') {
         return person
@@ -45,12 +51,11 @@ const HomeScreen = ({ match }) => {
     setPeopleArray(newData)
   }
 
-  //Function to filter Data via key world
+  //Function to filter Data via keyword
 
   const findPatients = (word, dataBase) => {
     if (word === undefined || word === null) {
       keyword = ''
-      console.log('keyword empty')
     }
     const filteredData = dataBase.filter((item) => {
       const titleCaseKeyword = toTitleCase(word)
@@ -58,7 +63,6 @@ const HomeScreen = ({ match }) => {
         return item
       }
     })
-    console.log('filtered', filteredData)
     setPeopleArray(filteredData)
   }
 
@@ -68,24 +72,13 @@ const HomeScreen = ({ match }) => {
     filter()
   }
 
-  const setData = () => {
-    setPeopleArray(data)
-  }
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      const res = await axios.get('https://api.enye.tech/v1/challenge/records')
-      console.log(res)
-      setLoading(false)
-    }
-
-    fetchData()
-    setData()
-    // filterData()
-    findPatients(keyword, data)
-  }, [gender, payment, keyword])
+    dispatch(listRecords())
+    // filter()
+    findPatients(keyword, peopleArray)
+  }, [dispatch, gender, payment, keyword])
 
   return (
     <div className='top'>

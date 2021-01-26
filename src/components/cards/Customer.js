@@ -26,7 +26,7 @@ const Customer = ({ data }) => {
               <td>{customer.Email}</td>
               <td>{customer.PhoneNumber}</td>
               <td>
-                <LinkContainer to={`/details/${customer.FirstName}`}>
+                <LinkContainer to={`/details/${customer.Email}`}>
                   <Button variant='outline-success' className='btn-sm'>
                     More Details
                   </Button>

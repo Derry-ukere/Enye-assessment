@@ -1,34 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import Card from 'react-bootstrap/Card'
 import { ListGroupItem, ListGroup } from 'react-bootstrap'
 import { Container } from 'react-bootstrap'
+import { fakeData } from '../../Data'
+import ProfileCard from '../cards/profileCard'
+import { listRecords } from '../../actions/patientsActions'
 
-const AboutScreen = () => {
+const AboutScreen = ({ match }) => {
+  const [profile, setProfile] = useState({})
+
+  // redux store
+  const dispatch = useDispatch()
+  const recordslist = useSelector((state) => state.recordslist)
+  const { loading, error, records } = recordslist
+  const email = match.params.email
+
+  //getting each details
+  const fetchSingleRecord = () => {
+    var t = records.filter(function (obj) {
+      if (obj.Email.includes(email)) {
+        return obj
+      }
+    })
+    console.log('users', t[0])
+    setProfile(t[0])
+  }
+
+  useEffect(() => {
+    console.log(records)
+    fetchSingleRecord()
+    dispatch(listRecords())
+  }, [dispatch])
   return (
     <div style={{ marginTop: '120px' }} className='py-3'>
       <Container>
-        <Card style={{ width: '18rem' }}>
-          <Card.Body>
-            <Card.Title> Full Name: Terry Kens</Card.Title>
-            <Card.Text>More Detailed Information about Terry Kens</Card.Text>
-          </Card.Body>
-          <ListGroup className='list-group-flush'>
-            <ListGroupItem>Email Address:</ListGroupItem>
-            <ListGroupItem>Phone Number:</ListGroupItem>
-            <ListGroupItem>Gender:</ListGroupItem>
-            <ListGroupItem>Latitude:</ListGroupItem>
-            <ListGroupItem>Longitude:</ListGroupItem>
-            <ListGroupItem>Credit Card Number:</ListGroupItem>
-            <ListGroupItem>Domain:</ListGroupItem>
-            <ListGroupItem>Mac Address:</ListGroupItem>
-            <ListGroupItem>Url:</ListGroupItem>
-            <ListGroupItem>Payment Method:</ListGroupItem>
-          </ListGroup>
-          <Card.Body>
-            <ListGroupItem>User Name:</ListGroupItem>
-            <ListGroupItem>Last Login:</ListGroupItem>
-          </Card.Body>
-        </Card>
+        <ProfileCard data={profile} />
       </Container>
     </div>
   )

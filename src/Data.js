@@ -1,4 +1,4 @@
-export const data = [
+export const fakeData = [
   {
     FirstName: 'Marjorie',
     LastName: 'Altenwerth',
@@ -235,30 +235,12 @@ export const toTitleCase = (str, includeAllCaps, includeMinorWords) => {
 }
 const setPeopleArray = []
 
-console.log(
-  'fromdatafile=======',
-  data.filter((item) => {
-    const titleCaseKeyword = toTitleCase('T')
-    if (item.FirstName.includes(titleCaseKeyword)) {
-      return item
-    }
-  })
-)
-console.log(toTitleCase('g'))
-
-// const filterData = () => {
-//     // if (keyword === undefined) {
-//     //   keyword = ''
-//     //   console.log('keyword empty')
-//     // }
-//     const keyword = 'h'
-//     console.log('keyword', keyword)
-//     const lowercasedValue = keyword.toLowerCase().trim()
-//     if (lowercasedValue === '') setPeopleArray(data)
-//     else {
-//       const filteredData = data.filter((item) => {
-//         return Object.values(item)
-//       })
-//       //   setPeopleArray(filteredData)
+// console.log(
+//   'fromdatafile=======',
+//   data.filter((item) => {
+//     const titleCaseKeyword = toTitleCase('T')
+//     if (item.FirstName.includes(titleCaseKeyword)) {
+//       return item
 //     }
-//   }
+//   })
+// )

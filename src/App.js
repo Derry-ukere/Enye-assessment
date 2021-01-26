@@ -14,7 +14,7 @@ function App() {
         <Container>
           <Route path='/' component={HomeScreen} exact />
           <Route path='/search/:keyword' component={HomeScreen} exact />
-          <Route path='/details/:name' component={AboutScreen} exact />
+          <Route path='/details/:email' component={AboutScreen} exact />
         </Container>
         <Footer />
       </div>
@@ -23,3 +23,16 @@ function App() {
 }
 
 export default App
+
+// const findUser = async () => {
+//   const res = await axios.get('https://api.enye.tech/v1/challenge/records')
+//   const data = res.data.records.profiles
+//   const email = match.params.email
+//   data.find((item) => {
+//     if (item.Email === email) {
+//       console.log('there')
+//     }
+//   })
+//   // console.log('user', user)
+//   // setProfile(user)
+// }
