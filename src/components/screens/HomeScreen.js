@@ -12,6 +12,7 @@ import {
 } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Customer from '../cards/Customer'
+import Meta from '../cards/Meta'
 import Filtered from '../cards/Patient'
 import Pagination from '../cards/paginate'
 import { fakeData, toTitleCase, filter } from '../../Data'
@@ -28,7 +29,7 @@ const HomeScreen = ({ match, history }) => {
   const [payment, setPayment] = useState('All')
   const [peopleArray, setPeopleArray] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [postsPerPage] = useState(2)
+  const [postsPerPage] = useState(20)
   const [filtered, setFiltered] = useState(false)
   var keyword = match.params.keyword
 
@@ -37,8 +38,8 @@ const HomeScreen = ({ match, history }) => {
   const indexOfFirstPost = indexOfLastPost - postsPerPage
   const currentPosts = records.slice(indexOfFirstPost, indexOfLastPost)
   const filteredPosts = peopleArray.slice(indexOfFirstPost, indexOfLastPost)
-  console.log('filtered', filteredPosts)
 
+  //filter options and save to local storage
   const filter = (gender, payment, dataBase) => {
     console.log(gender, payment)
     setFiltered(true)
@@ -66,9 +67,8 @@ const HomeScreen = ({ match, history }) => {
     filter(gender, payment, records)
   }
 
+  //handle Pagination clicks
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-  const paginate2 = (pageNumber) => setCurrentPage(pageNumber)
 
   useEffect(() => {
     console.log(peopleArray)
@@ -77,10 +77,12 @@ const HomeScreen = ({ match, history }) => {
 
   return (
     <div className='top'>
+      <Meta title={'Enye Hospital'} />
+
       <Row>
         <Col md={9}>
           <h1>All Patients</h1>
-          {loading ? (
+          {loading || records === [] ? (
             <Spinner />
           ) : error ? (
             <Message variant='danger'>{error}</Message>
@@ -141,6 +143,7 @@ const HomeScreen = ({ match, history }) => {
                             <option>check</option>
                             <option>money order</option>
                             <option>paypal</option>
+                            <option>cc</option>
                           </Form.Control>
                         </Form.Group>
                       </Col>
