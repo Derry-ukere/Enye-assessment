@@ -4,14 +4,20 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 import {
   reecordListReducer,
-  recordDetailsReducer,
+  filteredReducer,
 } from './reducers/patienceReducers'
 
 const reducer = combineReducers({
   recordslist: reecordListReducer,
+  filtered: filteredReducer,
 })
 
-const initialState = {}
+const FilteredPatienceFromStorage = localStorage.getItem('filtered')
+  ? JSON.parse(localStorage.getItem('filtered'))
+  : []
+const initialState = {
+  filtered: { filteredRecords: FilteredPatienceFromStorage },
+}
 
 const middleware = [thunk]
 

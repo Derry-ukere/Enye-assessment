@@ -5,6 +5,7 @@ import Footer from '../src/components/sections/Footer'
 import Header from '../src/components/sections/Header'
 import HomeScreen from '../src/components/screens/HomeScreen'
 import AboutScreen from '../src/components/screens/AboutScreen'
+import FilterScreen from '../src/components/screens/FilteredScreen'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Header />
         <Container>
           <Route path='/' component={HomeScreen} exact />
+          <Route path='/filter/details/:email' component={FilterScreen} exact />
           <Route path='/search/:keyword' component={HomeScreen} exact />
           <Route path='/details/:email' component={AboutScreen} exact />
         </Container>

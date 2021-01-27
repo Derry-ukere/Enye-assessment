@@ -12,32 +12,40 @@ import {
 } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Customer from '../cards/Customer'
+import Filtered from '../cards/Patient'
 import Pagination from '../cards/paginate'
-import { fakeData, toTitleCase } from '../../Data'
+import { fakeData, toTitleCase, filter } from '../../Data'
 import Spinner from '../cards/Spinner'
 import Message from '../cards/Message'
 import { listRecords } from '../../actions/patientsActions'
-const HomeScreen = ({ match }) => {
-  const [gender, setGender] = useState('All')
-  const [payment, setPayment] = useState('All')
-  const [peopleArray, setPeopleArray] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [postsPerPage] = useState(20)
-  const [isloading, setLoading] = useState(false)
-  var keyword = match.params.keyword
-
+const HomeScreen = ({ match, history }) => {
   // redux store
   const dispatch = useDispatch()
   const recordslist = useSelector((state) => state.recordslist)
   const { loading, error, records } = recordslist
+  //local states
+  const [gender, setGender] = useState('All')
+  const [payment, setPayment] = useState('All')
+  const [peopleArray, setPeopleArray] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [postsPerPage] = useState(2)
+  const [filtered, setFiltered] = useState(false)
+  var keyword = match.params.keyword
+
   // Get current patients
   const indexOfLastPost = currentPage * postsPerPage
   const indexOfFirstPost = indexOfLastPost - postsPerPage
   const currentPosts = records.slice(indexOfFirstPost, indexOfLastPost)
+  const filteredPosts = peopleArray.slice(indexOfFirstPost, indexOfLastPost)
+  console.log('filtered', filteredPosts)
 
-  const filter = () => {
+  const filter = (gender, payment, dataBase) => {
     console.log(gender, payment)
-    const newData = peopleArray.filter((person) => {
+    setFiltered(true)
+    console.log(filtered)
+    console.log('old people array', peopleArray)
+
+    const newData = dataBase.filter((person) => {
       if (gender === 'All' && payment === 'All') {
         return person
       } else if (gender !== 'All' && payment === 'All') {
@@ -48,37 +56,24 @@ const HomeScreen = ({ match }) => {
         return person.PaymentMethod === payment && person.Gender === gender
       }
     })
+    localStorage.setItem('filtered', JSON.stringify(newData))
     setPeopleArray(newData)
-  }
-
-  //Function to filter Data via keyword
-
-  const findPatients = (word, dataBase) => {
-    if (word === undefined || word === null) {
-      keyword = ''
-    }
-    const filteredData = dataBase.filter((item) => {
-      const titleCaseKeyword = toTitleCase(word)
-      if (item.FirstName.includes(titleCaseKeyword)) {
-        return item
-      }
-    })
-    setPeopleArray(filteredData)
   }
 
   // function to handle  form submit functionalities
   function submitHandler(e) {
     e.preventDefault()
-    filter()
+    filter(gender, payment, records)
   }
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
+  const paginate2 = (pageNumber) => setCurrentPage(pageNumber)
+
   useEffect(() => {
-    dispatch(listRecords())
-    // filter()
-    findPatients(keyword, peopleArray)
-  }, [dispatch, gender, payment, keyword])
+    console.log(peopleArray)
+    dispatch(listRecords(keyword))
+  }, [dispatch, keyword, peopleArray])
 
   return (
     <div className='top'>
@@ -87,10 +82,16 @@ const HomeScreen = ({ match }) => {
           <h1>All Patients</h1>
           {loading ? (
             <Spinner />
+          ) : error ? (
+            <Message variant='danger'>{error}</Message>
           ) : (
             <Container>
               <CardDeck className=' bg-secondary'>
-                <Customer data={currentPosts} />
+                {filtered ? (
+                  <Filtered data={filteredPosts} />
+                ) : (
+                  <Customer data={currentPosts} />
+                )}
               </CardDeck>
             </Container>
           )}
@@ -158,7 +159,7 @@ const HomeScreen = ({ match }) => {
       </Row>
       <Pagination
         postsPerPage={postsPerPage}
-        totalPosts={peopleArray.length}
+        totalPosts={records.length}
         paginate={paginate}
       />
     </div>

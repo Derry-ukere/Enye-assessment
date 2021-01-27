@@ -233,14 +233,44 @@ export const toTitleCase = (str, includeAllCaps, includeMinorWords) => {
     return str
   }
 }
-const setPeopleArray = []
 
-// console.log(
-//   'fromdatafile=======',
-//   data.filter((item) => {
-//     const titleCaseKeyword = toTitleCase('T')
-//     if (item.FirstName.includes(titleCaseKeyword)) {
-//       return item
-//     }
-//   })
-// )
+export const findPatients = (word, dataBase) => {
+  if (word === undefined || word === null) {
+    word = ''
+  }
+  const filteredData = dataBase.filter((item) => {
+    const titleCaseKeyword = toTitleCase(word)
+    if (item.FirstName.includes(titleCaseKeyword)) {
+      return item
+    }
+  })
+  // console.log('filtered data from fake data', filteredData)
+  return filteredData
+}
+
+export const filter = (gender, payment, dataBase) => {
+  console.log(gender, payment)
+  const newData = dataBase.filter((person) => {
+    if (gender === 'All' && payment === 'All') {
+      return person
+    } else if (gender !== 'All' && payment === 'All') {
+      return person.Gender === gender
+    } else if (gender === 'All' && payment !== 'All') {
+      return person.PaymentMethod === payment
+    } else if (gender !== 'All' && payment !== 'All') {
+      return person.PaymentMethod === payment && person.Gender === gender
+    }
+  })
+  return newData
+}
+
+filter('Male', 'All', fakeData)
+
+export const fetchSingleRecord = (Database, email) => {
+  const newData = Database.filter(function (obj) {
+    return obj.Email === email
+  })
+  return newData[0]
+}
+const test = fetchSingleRecord(fakeData, 'VpDeoFQ@RCxFcBf.org')
+console.log('testing fetch function', test)

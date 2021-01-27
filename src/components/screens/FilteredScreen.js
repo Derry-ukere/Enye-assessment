@@ -6,37 +6,31 @@ import { ListGroupItem, ListGroup } from 'react-bootstrap'
 import { Container } from 'react-bootstrap'
 import { fakeData } from '../../Data'
 import ProfileCard from '../cards/profileCard'
-import { listRecords } from '../../actions/patientsActions'
+import { filteredPatience } from '../../actions/patientsActions'
 
 const AboutScreen = ({ match }) => {
-  const [profile, setProfile] = useState({})
-
   // redux store
   const dispatch = useDispatch()
-  const recordslist = useSelector((state) => state.recordslist)
-  const { loading, error, records } = recordslist
+  const filtered = useSelector((state) => state.filtered)
+  const { filteredRecords } = filtered
+
+  const [profile, setProfile] = useState({})
   const email = match.params.email
 
   //getting each details
-  const fetchSingleRecord = () => {
-    var t = records.filter(function (obj) {
-      if (obj.Email.includes(email)) {
-        return obj
-      }
-    })
-    console.log('users', t[0])
-    setProfile(t[0])
-  }
 
+  //   useEffect(() => {
+  //     console.log('filter records', filteredRecords)
+  //     fetchSingleRecord()
+  //   })
   useEffect(() => {
-    console.log(records)
-    fetchSingleRecord()
-    dispatch(listRecords())
+    // console.log('filer records', filteredRecords[0].Email)
+    dispatch(filteredPatience(email))
   }, [])
   return (
     <div style={{ marginTop: '120px' }} className='py-3'>
       <Container>
-        <ProfileCard data={profile} />
+        <ProfileCard data={filteredRecords} />
       </Container>
     </div>
   )

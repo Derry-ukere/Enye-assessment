@@ -14,11 +14,25 @@ export const reecordListReducer = (state = { records: [] }, action) => {
     case RECORDS_LIST_SUCCESS:
       return {
         loading: false,
-        records: action.payload.records.profiles,
+        records: action.payload,
       }
 
     case RECORDS_LIST_FAIL:
       return { loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
+
+export const filteredReducer = (state = { filteredRecords: [] }, action) => {
+  switch (action.type) {
+    case RECORDS_DETAILS_REQUEST:
+      return { loading: true }
+    case RECORDS_DETAILS_SUCCESS:
+      return { loading: false, filteredRecords: action.payload }
+    case RECORDS_DETAILS_FAIL:
+      return { loading: false, error: action.payload }
+
     default:
       return state
   }
